@@ -1,0 +1,57 @@
+<html>
+  <head> </head>
+  <body>
+    <button id="fetchData">Fetch Data</button>
+    <button id="category">category</button>
+    <div id="output">
+        <ul id="list"></ul>
+    </div>
+    <script>
+      document.getElementById("fetchData").addEventListener("click", fetchData);
+      document.getElementById("category").addEventListener("click", getCategory);
+
+      function fetchData() {
+        document.getElementById("list").innerHTML = "";
+        
+        fetch("http://localhost:8080/")
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(`Data: ${JSON.stringify(data)}`);
+            
+            const booksList = data;
+            const list = document.getElementById('list');
+
+            for (let i = 0; i < booksList.length; i++) {
+                let books = document.createElement("li");
+                books.textContent = `Book Name: ${booksList[i].book_name}`;
+                list.appendChild(books);
+            } 
+
+            // document.getElementById("output").innerHTML = list
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      
+      }
+
+      function getCategory() {
+        document.getElementById("list").innerHTML = "";
+        fetch("http://localhost:8080/getCategory")
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(JSON.stringify(data));
+
+            const catList = data;
+            const list = document.getElementById("list")
+            for (let i = 0; i < catList.length; i++) {
+                let category = document.createElement("li");
+                category.textContent = `category: ${catList[i].category}`;
+                list.appendChild(category);
+            }
+        })
+       
+      }
+    </script>
+  </body>
+</html>
