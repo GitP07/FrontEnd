@@ -5,29 +5,79 @@
     </head>
     <body>
         <input type="text" id="search">
-        <button id="serBtn">search</button>
+        <button id="serBtn">search</button><br>
+        <div>
+            <h1 id="message" style="display: none;"></h1>
+
+            <table border="2px" id="tabl" style="display: none;">
+                <tr>
+                    <th>Book Id</th>
+                    <th>Book Name</th>
+                    <th>Category</th>
+                    <th>Book Author</th>
+                    <th>Book Price</th>
+                </tr>
+                <tr>
+                    <td id="td1"></td>
+                    <td id="td2"></td>
+                    <td id="td3"></td>
+                    <td id="td4"></td>
+                    <td id="td5"></td>
+
+                </tr>
+            </table>
+        </div>
 
         <script>
             document.getElementById("serBtn").addEventListener("click", searchBooks);
 
-           async function searchBooks() {
+            function searchBooks() {
                 const searchElement = document.getElementById("search").value;
                 let bookName = document.getElementById("search").value;
-                // let fetchUrl = "http://localhost:/getBookByName/"+bookName;
-                // console.log(fetchUrl);
+        
+                if (searchElement.length > 0) {
+                    document.getElementById("message").style.display = "none";
+                    
+                    fetch("http://localhost:8080/getBookByName/"+bookName)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(`Data ${JSON.stringify(data)}`);
+                        console.log("data length"+Object.keys(data).length);
+                        
+                        if(Object.keys(data).length == 1){
+                            document.getElementById("tabl").style.display = "none";
+                            document.getElementById("message").style.display = "block";
 
-                await fetch("http://localhost:8080/getBookByName/"+bookName)
-                .then((response) => {
-                    console.log("ressponse"+JSON.stringify(response));
+                            document.getElementById("message").innerHTML = data.message;
 
-                    response.json();
-                })
-                .then((data) => {
-                    console.log(data);
-                })
-                .catch((error) => {
-                    console.log(`Error: ${error}`);
-                })
+                        }
+                        else{
+                            document.getElementById("tabl").style.display = "table";
+
+                            document.getElementById("td1").innerHTML = data.unique_id;
+                            document.getElementById("td2").innerHTML = data.book_name;
+                            document.getElementById("td3").innerHTML = data.category;
+                            document.getElementById("td4").innerHTML = data.author_name;
+                            document.getElementById("td5").innerHTML = data.price;
+
+                        }
+
+                    })
+                    .catch((error) => {
+                        console.log(`Error: ${error}`);
+                    })
+
+                }
+                else{
+                    document.getElementById("tabl").style.display = "none";
+                    document.getElementById("message").style.display = "block";
+                    document.getElementById("message").innerHTML = "Please Enter Book Name";
+
+                    console.log("No Search Element Found");
+                    
+                }
+
+               
             }
         </script>
     </body>
